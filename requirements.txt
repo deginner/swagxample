@@ -1,0 +1,17 @@
+# data storage
+Flask-SQLAlchemy
+jsonschema
+
+# Web
+Flask
+flask-bitjws
+
+# Authentication
+bitjws
+ecdsa
+secp256k1
+
+# client (for testing... move later)
+requests
+bravado-bitjws
+

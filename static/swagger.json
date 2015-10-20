@@ -1,0 +1,448 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.0",
+        "title": "Coin Owner bitjws example",
+        "description": "A port of the coinowner example app from flask-mrest using bitjws and swagger",
+        "termsOfService": "http://deginner.com/terms/",
+        "contact": {
+            "name": "Deginner",
+            "url": "http://deginner.com"
+        },
+        "license": {
+            "name": "Creative Commons 4.0 International",
+            "url": "http://creativecommons.org/licenses/by/4.0/"
+        }
+    },
+    "host": "0.0.0.0:8002",
+    "basePath": "/",
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "consumes": [
+        "application/jsw"
+    ],
+    "produces": [
+        "application/jsw"
+    ],
+    "securityDefinitions": {
+        "kid": {
+            "type": "apiKey",
+            "in": "query",
+            "name": "kid",
+            "description": "The JWS key"
+        },
+        "typ": {
+            "type": "apiKey",
+            "in": "query",
+            "name": "typ",
+            "description": "The message type"
+        },
+        "alg": {
+            "type": "apiKey",
+            "in": "query",
+            "name": "alg",
+            "description": "The signing algorithm to use i.e. \"CUSTOM-BITCOIN-SIGN\""
+        }
+    },
+    "security": [
+        {
+            "kid": []
+        },
+        {
+            "typ": []
+        },
+        {
+            "alg": []
+        }
+    ],
+    "paths": {
+        "/coin": {
+            "get": {
+                "description": "get a list of all coins you own",
+                "operationId": "findCoin",
+                "produces": [
+                    "application/jsw"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "coin response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/coin"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            },
+            "post": {
+                "description": "Creates a new coin.",
+                "operationId": "addCoin",
+                "produces": [
+                    "application/jsw"
+                ],
+                "parameters": [
+                    {
+                        "name": "coin",
+                        "in": "body",
+                        "description": "A communal property coin",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/coin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "coin response",
+                        "schema": {
+                            "$ref": "#/definitions/coin"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            }
+        },
+        "/coin/{id}": {
+            "get": {
+                "description": "Returns a coin based on a single ID",
+                "operationId": "findCoinById",
+                "produces": [
+                    "application/jsw",
+                    "application/xml",
+                    "text/xml",
+                    "text/html"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of coin to fetch",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "coin response",
+                        "schema": {
+                            "$ref": "#/definitions/coin"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            },
+            "put": {
+                "description": "updates a single coin based on the ID supplied",
+                "operationId": "putCoin",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of coin to update",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "coin response",
+                        "schema": {
+                            "$ref": "#/definitions/coin"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            },
+            "delete": {
+                "description": "deletes a single coin based on the ID supplied",
+                "operationId": "deleteCoin",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of coin to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "coin deleted"
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            }
+        },
+        "/user": {
+            "get": {
+                "description": "get your user record",
+                "operationId": "getUserList",
+                "produces": [
+                    "application/jsw"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            },
+            "post": {
+                "description": "Register a new User.",
+                "operationId": "addUser",
+                "produces": [
+                    "application/jsw"
+                ],
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "A new User to add",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user response",
+                        "schema": {
+                            "$ref": "#/definitions/user"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "description": "Returns a user based on a single ID",
+                "operationId": "findUserById",
+                "produces": [
+                    "application/jsw"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of user to fetch",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user response",
+                        "schema": {
+                            "$ref": "#/definitions/user"
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/errorModel"
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "kid": []
+                    },
+                    {
+                        "typ": []
+                    },
+                    {
+                        "alg": []
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "user": {
+            "type": "object",
+            "required": [
+                "address",
+                "username"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "coin": {
+            "type": "object",
+            "required": [
+                "metal",
+                "mint"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "metal": {
+                    "type": "string"
+                },
+                "mint": {
+                    "type": "string"
+                }
+            }
+        },
+        "errorModel": {
+            "type": "object",
+            "required": [
+                "code",
+                "message"
+            ],
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
