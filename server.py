@@ -40,9 +40,7 @@ def get_coins():
     coinsq = Coin.query.all()
     coins = query_to_item(coinsq, Coin)
     print coins
-    # would like to return coins directly (list) at this point, but wrapping
-    # in dict instead
-    response = current_app.create_bitjws_response(result=coins)
+    response = current_app.create_bitjws_response(coins)
     return response
 
 @app.route('/coin', methods=['POST'])
@@ -58,14 +56,14 @@ def post_coin():
         db.session.commit()
     except Exception as ie:
         return generic_code_error('Could not create coin')
-    return current_app.create_bitjws_response(**dictify_item(coin, Coin))
+    return current_app.create_bitjws_response(dictify_item(coin, Coin))
 
 
 @app.route('/user', methods=['GET'])
 @login.login_required
-def get_users():
-    response = current_app.create_bitjws_response(username=login.current_user.username, address=login.current_user.address, id=login.current_user.id)
-    return response
+def get_user():
+    userdict = dictify_item(login.current_user, User)
+    return current_app.create_bitjws_response(userdict)
 
 
 @app.route('/user', methods=['POST'])
@@ -81,8 +79,7 @@ def post_user():
         db.session.commit()
     except Exception as ie:
         return generic_code_error('username or address taken')
-    response = current_app.create_bitjws_response(username=username,
-            address=address, id=user.id)
+    response = current_app.create_bitjws_response(dictify_item(user, User))
     return response
 
 
