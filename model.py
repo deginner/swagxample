@@ -1,41 +1,18 @@
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext import login
+import sqlalchemy as sa
+import sqlalchemy.orm as orm
+from sqlalchemy.ext.declarative import declarative_base
 
-db = SQLAlchemy()
-
-
-#TODO these database functions don't really belong here...
-def dictify_item(item, model):
-    columns = [c.name for c in model.__table__.columns]
-    columnitems = dict([(c, getattr(item, c)) for c in columns])
-    return columnitems
+SABase = declarative_base()
 
 
-def query_to_item(query, model):
-    if isinstance(query, db.Model):
-        return dictify_item(query, model)
-    else:
-        items = []
-        for item in query:
-            items.append(dictify_item(item, model))
-        return items
+class Coin(SABase):
+    """A Coin for someone's collection."""
+    __tablename__ = "coin"
+    __name__ = "coin"
 
-
-# SQLAlchemy models
-class User(db.Model, login.UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String(80), unique=True)
-    username = db.Column(db.String(80), unique=True)
-
-    def __init__(self, address, username):
-        self.address = address
-        self.username = username
-
-
-class Coin(db.Model):
-    id = db.Column(db.Integer, primary_key=True, doc="primary key")
-    metal = db.Column(db.String(255), nullable=False)
-    mint = db.Column(db.String(255), nullable=False)
+    id = sa.Column(sa.Integer, primary_key=True, doc="primary key")
+    metal = sa.Column(sa.String(255), nullable=False)
+    mint = sa.Column(sa.String(255), nullable=False)
 
     def __init__(self, metal, mint):
         self.metal = metal

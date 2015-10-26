@@ -1,5 +1,7 @@
 # data storage
-Flask-SQLAlchemy
+# pending pr #250
+# Flask-SQLAlchemy
+git+https://github.com/nickw444/flask-sqlalchemy
 jsonschema
 
 # Web
@@ -14,4 +16,8 @@ secp256k1
 # client (for testing... move later)
 requests
 bravado-bitjws
+
+# pending pr #4
+#alchemyjsonschema
+git+https://github.com/isysd/alchemyjsonschema/
 
