@@ -1,2 +1,5 @@
 *pyc
 *~
+.cache
+.eggs
+*.egg-info

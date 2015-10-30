@@ -1,7 +1,9 @@
 import alchemyjsonschema as ajs
 import bitjws
 import copy
+import imp
 import os
+import sys
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from alchemyjsonschema.dictify import jsonify
@@ -12,16 +14,30 @@ from flask_bitjws import FlaskBitjws, load_jws_from_request, FlaskUser
 from sqlalchemy_login_models.model import UserKey, User as SLM_User
 from model import Coin
 
-import cfg
+try:
+    cfg_loc = os.environ.get('SWAGXAMPLE_CONFIG_FILE', 'example_cfg.py')
+    cfg_raw = None
+    with open(cfg_loc, 'r') as f:
+        cfg = imp.load_module("config_as_module", f, cfg_loc,
+                              ('.py', 'r', imp.PY_SOURCE))
+except Exception as e:
+    print e
+    print "Unable to configurate application. Exiting."
+    sys.exit()
 
 factory = ajs.SchemaFactory(ajs.AlsoChildrenWalker)
 
+
+__all__ = ['app', ]
+
+
 def get_last_nonce(app, key, nonce):
     """
-    This method is only an example! Replace it with a real nonce database.
+    Get the last_nonce used by the given key from the SQLAlchemy database.
+    Update the last_nonce to nonce at the same time.
 
     :param str key: the public key the nonce belongs to
-    :param int nonce: the latest nonce
+    :param int nonce: the last nonce used by this key
     """
     uk = ses.query(UserKey).filter(UserKey.key==key)\
             .filter(UserKey.last_nonce<nonce * 1000).first()
@@ -41,7 +57,7 @@ def get_last_nonce(app, key, nonce):
 
 def get_user_by_key(app, key):
     """
-    This method is only an example! Replace it with a real user database.
+    An SQLAlchemy User getting function. Get a user by public key.
 
     :param str key: the public key the user belongs to
     """
@@ -114,6 +130,8 @@ def post_user():
         ses.commit()
     except Exception as ie:
         print ie
+        ses.rollback()
+        ses.flush()
         return 'username taken', 400
     userkey = UserKey(key=address, keytype='public', user_id=user.id,
                       last_nonce=request.jws_payload['iat']*1000)
@@ -122,8 +140,10 @@ def post_user():
         ses.commit()
     except Exception as ie:
         print ie
-        ses.delete(user)
-        ses.commit()
+        ses.rollback()
+        ses.flush()
+        #ses.delete(user)
+        #ses.commit()
         return 'username taken', 400
     jresult = jsonify(userkey, factory.__call__(userkey))
     return current_app.bitjws.create_response(jresult)
