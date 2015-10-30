@@ -10,6 +10,6 @@ Start the server.
 
 Run the client actions.
 
-`python client_actions.py`  
+`python client_actions.py`
 
 

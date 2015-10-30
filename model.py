@@ -1,11 +1,13 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
-from sqlalchemy.ext.declarative import declarative_base
+from flask.ext.login import UserMixin
+from sqlalchemy_login_models.model import Base, UserKey, User as SLM_User
 
-SABase = declarative_base()
+
+__all__ = ['Coin']
 
 
-class Coin(SABase):
+class Coin(Base):
     """A Coin for someone's collection."""
     __tablename__ = "coin"
     __name__ = "coin"
@@ -14,6 +16,15 @@ class Coin(SABase):
     metal = sa.Column(sa.String(255), nullable=False)
     mint = sa.Column(sa.String(255), nullable=False)
 
-    def __init__(self, metal, mint):
+    # foreign key reference to the owner of this coin's API key
+    user_id = sa.Column(
+        sa.Integer,
+        sa.ForeignKey('user.id'),
+        nullable=False)
+    user = orm.relationship("User", foreign_keys=[user_id])
+
+    def __init__(self, metal, mint, uid):
         self.metal = metal
         self.mint = mint
+        self.user_id = uid
+

@@ -1,23 +1,20 @@
-# data storage
-# pending pr #250
-# Flask-SQLAlchemy
-git+https://github.com/nickw444/flask-sqlalchemy
-jsonschema
+## security
+bitjws==0.6.3.1
 
-# Web
-Flask
+# database
+sqlalchemy
+alchemyjsonschema
+
+# pending Pypi release
+#sqlalchemy-login-models
+git+https://github.com/deginner/sqlalchemy-login-models
+
+# web server
+flask
+flask-login
 flask-bitjws
 
-# Authentication
-bitjws
-ecdsa
-secp256k1
-
-# client (for testing... move later)
+# client (for testing... move if create setup.py)
 requests
 bravado-bitjws
-
-# pending pr #4
-#alchemyjsonschema
-git+https://github.com/isysd/alchemyjsonschema/
 

@@ -21,10 +21,10 @@
         "https"
     ],
     "consumes": [
-        "application/jsw"
+        "application/jose"
     ],
     "produces": [
-        "application/jsw"
+        "application/jose"
     ],
     "securityDefinitions": {
         "kid": {
@@ -63,7 +63,7 @@
                 "description": "get a list of all coins you own",
                 "operationId": "findCoin",
                 "produces": [
-                    "application/jsw"
+                    "application/jose"
                 ],
                 "responses": {
                     "200": {
@@ -98,7 +98,7 @@
                 "description": "Creates a new coin.",
                 "operationId": "addCoin",
                 "produces": [
-                    "application/jsw"
+                    "application/jose"
                 ],
                 "parameters": [
                     {
@@ -143,7 +143,7 @@
                 "description": "Returns a coin based on a single ID",
                 "operationId": "findCoinById",
                 "produces": [
-                    "application/jsw",
+                    "application/jose",
                     "application/xml",
                     "text/xml",
                     "text/html"
@@ -265,7 +265,7 @@
                 "description": "get your user record",
                 "operationId": "getUserList",
                 "produces": [
-                    "application/jsw"
+                    "application/jose"
                 ],
                 "responses": {
                     "200": {
@@ -300,7 +300,7 @@
                 "description": "Register a new User.",
                 "operationId": "addUser",
                 "produces": [
-                    "application/jsw"
+                    "application/jose"
                 ],
                 "parameters": [
                     {
@@ -315,9 +315,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "user response",
+                        "description": "user's new key",
                         "schema": {
-                            "$ref": "#/definitions/user"
+                            "$ref": "#/definitions/user_key"
                         }
                     },
                     "default": {
@@ -345,7 +345,7 @@
                 "description": "Returns a user based on a single ID",
                 "operationId": "findUserById",
                 "produces": [
-                    "application/jsw"
+                    "application/jose"
                 ],
                 "parameters": [
                     {
@@ -389,7 +389,6 @@
         "user": {
             "type": "object",
             "required": [
-                "address",
                 "username"
             ],
             "properties": {
@@ -397,15 +396,56 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "address": {
+                "salt": {
                     "type": "string"
                 },
                 "username": {
                     "type": "string"
                 }
             }
-        },
-        "coin": {
+        }, "user_key": {
+          "description": "A User's API key", 
+          "title": "user_key", 
+          "required": [
+            "key"
+          ], 
+          "type": "object", 
+          "properties": {
+            "id": {
+              "type": "integer", 
+              "description": "primary key"
+            }, 
+            "key": {
+              "type": "string", 
+              "maxLength": 36
+            }, 
+            "createtime": {
+              "type": "string", 
+              "format": "date-time"
+            }, 
+            "deactivated_at": {
+              "type": "string", 
+              "format": "date-time"
+            }, 
+            "permissionbits": {
+              "type": "string"
+            }, 
+            "keytype": {
+              "enum": [
+                "public", 
+                "tfa"
+              ], 
+              "type": "string", 
+              "maxLength": 6
+            }, 
+            "last_nonce": {
+              "type": "integer"
+            }, 
+            "user": {
+              "$ref": "#/definitions/user"
+            }
+          }
+        }, "coin": {
             "type": "object",
             "required": [
                 "metal",
@@ -416,9 +456,8 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "user_id": {
-                    "type": "integer",
-                    "format": "int64"
+                "user": {
+                  "$ref": "#/definitions/user"
                 },
                 "metal": {
                     "type": "string"

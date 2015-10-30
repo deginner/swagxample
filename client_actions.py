@@ -1,5 +1,3 @@
-# Install requirements: pip install requests
-import requests
 import bitjws
 from bravado_bitjws.client import BitJWSSwaggerClient
 
@@ -19,7 +17,7 @@ client = BitJWSSwaggerClient.from_url(specurl, privkey=privkey)
 
 # register a new user
 print "registering a new user for this session"
-user = client.get_model('user')(address=my_address, username=username)
+user = client.get_model('user')(username=username)
 print client.user.addUser(user=user).result()
 
 # create two coins
@@ -33,5 +31,4 @@ print client.coin.addCoin(coin=coin2).result()
 # because spec defines an array of coins response
 print "attempt to get a list of coins"
 print client.coin.findCoin().result()
-
 
