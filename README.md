@@ -24,7 +24,7 @@ The app is a Coin collection, where Users identified by bitjws keys can create a
 |[SQLAlchemy](https://sqlalchemy.org) | [![PyPi version](https://img.shields.io/pypi/v/sqlalchemy.svg)](https://pypi.python.org/pypi/sqlalchemy/) | SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL. |
 |[flask-swagger](https://github.com/deginner/flask-swagger) | [![PyPi version](https://img.shields.io/pypi/v/flask-swagger.svg)](https://pypi.python.org/pypi/flask-swagger/) |A Swagger 2.0 spec extractor for Flask. |
 |[alchemyjsonchema](https://github.com/deginner/alchemyjsonschema) | [![PyPi version](https://img.shields.io/pypi/v/alchemyjsonschema.svg)](https://pypi.python.org/pypi/alchemyjsonschema/) | Convert SQLAlchemy ORM objects to schemas. |
-|[Swagger-UI](http://swagger.io/swagger-ui/) | [![PyPi version](https://img.shields.io/pypi/v/swagger-ui.svg)](https://pypi.python.org/pypi/swagger-ui/) | Automatically generated, interactive documentation for Swagger specs. |
+|[Swagger-UI](http://swagger.io/swagger-ui/) | [![NPM version](https://badge.fury.io/js/swagger-ui.png)](http://badge.fury.io/js/swagger-ui) | Automatically generated, interactive documentation for Swagger specs. |
 
 
 ## Usage
