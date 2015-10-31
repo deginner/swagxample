@@ -8,7 +8,7 @@ classifiers = [
 
 setup(
     name='Swagxamle',
-    version='0.0.1',
+    version='0.0.2',
     packages=['swagxample'],
     url='https://bitbucket.org/deginner/swagxample',
     license='MIT',
@@ -26,4 +26,3 @@ setup(
     ],
     tests_require=['pytest', 'pytest-cov']
 )
-

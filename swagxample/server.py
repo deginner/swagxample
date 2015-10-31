@@ -2,17 +2,18 @@ import alchemyjsonschema as ajs
 import bitjws
 import copy
 import imp
+import json
 import os
 import sys
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from alchemyjsonschema.dictify import jsonify
-from jsonschema import validate, ValidationError
-from flask import Flask, request, current_app, make_response, g
+from flask import Flask, request, current_app, make_response
 from flask.ext.login import login_required, current_user
 from flask_bitjws import FlaskBitjws, load_jws_from_request, FlaskUser
+from jsonschema import validate, ValidationError
 from sqlalchemy_login_models.model import UserKey, User as SLM_User
-from model import Coin
+import model
 
 try:
     cfg_loc = os.environ.get('SWAGXAMPLE_CONFIG_FILE', 'example_cfg.py')
@@ -25,7 +26,15 @@ except Exception as e:
     print "Unable to configurate application. Exiting."
     sys.exit()
 
-factory = ajs.SchemaFactory(ajs.AlsoChildrenWalker)
+# get the swagger spec for this server
+SWAGGER_SPEC = json.loads(open('swagxample/static/swagger.json').read())
+# invert definitions
+def jsonify2(obj, name):
+    #TODO replace this with a cached definitions patch
+    #this is inefficient to do each time...
+    spec = copy.copy(SWAGGER_SPEC['definitions'][name])
+    spec['definitions'] = SWAGGER_SPEC['definitions']
+    return jsonify(obj, spec)
 
 
 __all__ = ['app', ]
@@ -64,7 +73,6 @@ def get_user_by_key(app, key):
     user = ses.query(SLM_User).join(UserKey).filter(UserKey.key==key).first()
     return user
 
-
 # Setup flask app and FlaskBitjws
 app = Flask(__name__)
 app._static_folder = "%s/static" % os.path.realpath(os.path.dirname(__file__))
@@ -76,21 +84,42 @@ eng = sa.create_engine(cfg.SA_ENGINE_URI)
 ses = orm.sessionmaker(bind=eng)()
 SLM_User.metadata.create_all(eng)
 UserKey.metadata.create_all(eng)
-Coin.metadata.create_all(eng)
+for m in model.__all__:
+    getattr(model, m).metadata.create_all(eng)
+Coin = model.Coin
 
-# A dynamic way to initialize the models
-#for m in model.__all__:
-#    if m != 'FlaskUser':
-#        getattr(model, m).metadata.create_all(eng)
 
 @app.route('/coin', methods=['GET'])
 @login_required
 def get_coins():
+    """
+    Get a list of all coins.
+    Currently no search parameters are supported.
+    ---
+    responses:
+      '200':
+        description: coin response
+        schema:
+          items:
+            $ref: '#/definitions/Coin'
+          type: array
+      default:
+        description: unexpected error
+        schema:
+          $ref: '#/definitions/errorModel'
+    produces:
+      - application/jose
+    description: get a list of all coins you own
+    security:
+      - kid: []
+      - typ: []
+      - alg: []
+    operationId: findCoin
+    """
     coinsq = ses.query(Coin).all()
     if not coinsq:
         return None
-    cschema = factory.__call__(Coin)
-    coins = [jsonify(c, cschema) for c in coinsq]
+    coins = [jsonify2(c, 'Coin') for c in coinsq]
     response = current_app.bitjws.create_response(coins)
     return response
 
@@ -98,6 +127,34 @@ def get_coins():
 @app.route('/coin', methods=['POST'])
 @login_required
 def post_coin():
+    """
+    Create a coin. The request sender will be installed as the coin's user.
+    ---
+    operationId: addCoin
+    description: Creates a new coin.
+    responses:
+      '200':
+        description: coin response
+        schema:
+          $ref: '#/definitions/Coin'
+      default:
+        description: unexpected error
+        schema:
+          $ref: '#/definitions/errorModel'
+    parameters:
+      - schema:
+          $ref: '#/definitions/Coin'
+        description: A communal property coin
+        required: true
+        name: coin
+        in: body
+    produces:
+      - application/jose
+    security:
+      - kid: []
+      - typ: []
+      - alg: []
+    """
     metal = request.jws_payload['data'].get('metal')
     mint = request.jws_payload['data'].get('mint')
     coin = Coin(metal, mint, current_user.id)
@@ -106,19 +163,73 @@ def post_coin():
         ses.commit()
     except Exception as ie:
         return generic_code_error('Could not create coin')
-    newcoin = jsonify(coin, factory.__call__(coin))
+    newcoin = jsonify2(coin, 'Coin')
     return current_app.bitjws.create_response(newcoin)
 
 
 @app.route('/user', methods=['GET'])
 @login_required
 def get_user():
-    userdict = jsonify(current_user, factory.__call__(current_user))
+    """
+    Get your user object.
+
+    Users may only get their own info, not others'.
+    ---
+    responses:
+      '200':
+        description: user response
+        schema:
+          items:
+            $ref: '#/definitions/User'
+          type: array
+      default:
+        description: unexpected error
+        schema:
+          $ref: '#/definitions/errorModel'
+    produces:
+      - application/jose
+    description: get your user record
+    security:
+      - kid: []
+      - typ: []
+      - alg: []
+    operationId: getUserList
+    """
+    userdict = jsonify2(current_user.db_user, 'User')
     return current_app.bitjws.create_response(userdict)
 
 
 @app.route('/user', methods=['POST'])
-def post_user():
+def add_user():
+    """
+    Register a new User.
+    Create a User and a UserKey based on the JWS header and payload.
+    ---
+    operationId:
+      addUser
+    produces:
+      - application/jose
+    parameters:
+      - name: user
+        in: body
+        description: A new User to add
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+    responses:
+      '200':
+        description: "user's new key"
+        schema:
+          $ref: '#/definitions/UserKey'
+      default:
+        description: unexpected error
+        schema:
+          $ref: '#/definitions/errorModel'
+    security:
+      - kid: []
+      - typ: []
+      - alg: []
+    """
     load_jws_from_request(request)
     if not hasattr(request, 'jws_header') or request.jws_header is None:
         return "Invalid Payload", 401
@@ -145,18 +256,8 @@ def post_user():
         #ses.delete(user)
         #ses.commit()
         return 'username taken', 400
-    jresult = jsonify(userkey, factory.__call__(userkey))
+    jresult = jsonify2(userkey, 'UserKey')
     return current_app.bitjws.create_response(jresult)
-
-
-@app.route('/userkey', methods=['GET'])
-@login_required
-def get_userkey():
-    username = request.jws_payload['data'].get('username')
-    address = request.jws_header['kid']
-    userkeys = jsonify(current_user, factory.__call__(current_user))
-    return current_app.bitjws.create_response(userdict)
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8002, debug=True)

@@ -14,7 +14,7 @@ username = str(my_address)[0:8]
 
 client = BitJWSSwaggerClient.from_url(specurl, privkey=privkey)
 
-luser = client.get_model('user')(username=username)
+luser = client.get_model('User')(username=username)
 user = client.user.addUser(user=luser).result()
 
 
@@ -28,14 +28,14 @@ def test_register_user():
 
     client2 = BitJWSSwaggerClient.from_url(specurl, privkey=privkey2)
 
-    luser2 = client2.get_model('user')(username=username2)
+    luser2 = client2.get_model('User')(username=username2)
     user2 = client2.user.addUser(user=luser2).result()
     assert hasattr(user2, 'id')
 
 
 def test_create_coin():
     print "creating a new coin"
-    lcoin = client.get_model('coin')(metal='ub', mint='uranus')
+    lcoin = client.get_model('Coin')(metal='ub', mint='uranus')
     coin = client.coin.addCoin(coin=lcoin).result()
     assert hasattr(coin, 'id')
     assert coin.user.id == user.id
