@@ -21,3 +21,4 @@ bravado-bitjws
 # pending pr #16 publishing to pypi
 #flask-swagger
 git+https://github.com/deginner/flask-swagger
+

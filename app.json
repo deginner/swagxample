@@ -1,0 +1,9 @@
+{
+  "name": "Swagxample",
+  "description": "The Swagxample app is a Coin collection, where Users identified by bitjws keys can create and manage virtual Coins stored on the server.",
+  "logo": "https://avatars3.githubusercontent.com/u/14840706?v=3&s=200",
+  "image": "heroku/python",
+  "repository": "https://github.com/deginner/swagxample",
+  "keywords": ["python", "flask", "swagger", "sqlalchemy", "bitjws", "jws", "bitcoin"],
+  "addons": [ "heroku-postgresql" ]
+}
