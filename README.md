@@ -1,31 +1,8 @@
 # Swagger + bitjws Example App
 
-The app is a Coin collection, where Users identified by bitjws keys can create and manage virtual Coins stored on the server. For detailed documentation of the API, see the [swagger spec](http://deginner.github.io/swaxample-ui/).
+The app is a Coin collection, where Users identified by bitjws keys can create and manage virtual Coins stored on the server. For detailed documentation of the API, see the [swagger docs](http://deginner.github.io/swaxample-ui/).
 
 [Deginner](https://github.com/deginner/) created this app to demo its rapid API development stack. It will be featured in a tutorial and a meetup of that nature. Follow and fork it to participate.
-
-
-### Deginner Application Stack
-
-| Project |                 Version    |  Description                    |
-|---------|------------|---------------|---------------------------------|
-|[bitjws](https://github.com/deginner/bitjws) | [![PyPi version](https://img.shields.io/pypi/v/bitjws.svg)](https://pypi.python.org/pypi/bitjws/) |JWS ([JSON Web Signature](http://self-issued.info/docs/draft-ietf-jose-json-web-signature.html)) using Bitcoin message signing as the algorithm.|
-|[flask-bitjws](https://github.com/deginner/flask-bitjws) | [![PyPi version](https://img.shields.io/pypi/v/flask-bitjws.svg)](https://pypi.python.org/pypi/flask-bitjws/) |[Flask](http://flask.pocoo.org) extension for [bitjws](https://github.com/g-p-g/bitjws) authentication. |
-|[bravado-bitjws](https://github.com/deginner/bravado-bitjws) | [![PyPi version](https://img.shields.io/pypi/v/bravado-bitjws.svg)](https://pypi.python.org/pypi/bravado-bitjws/) |Bravado-bitjws is an add on for [Bravado](https://github.com/Yelp/bravado) that allows [bitjws](https://github.com/g-p-g/bitjws) authentication.|
-|[sqlalchemy-login-models](https://github.com/deginner/sqlalchemy-login-models) | 0.0.4 | User related data models for a server using [SQLAlchemy](http://www.sqlalchemy.org/), and [json schemas](http://json-schema.org/). |
-
-
-### Imported Stack
-
-| Project |                 Version    |  Description                    |
-|---------|------------|---------------|---------------------------------|
-|[Flask](http://flask.pocoo.org/) | [![PyPi version](https://img.shields.io/pypi/v/flask.svg)](https://pypi.python.org/pypi/flask/) | Flask is a microframework for Python based on Werkzeug, Jinja 2 and good intentions. |
-|[Swagger](http://swagger.io/) | 2.0 | Swagxample includes a Swagger spec which is used to configure the [bravado-bitjws](https://github.com/deginner/bravado-bitjws) client automatically. |
-|[SQLAlchemy](https://sqlalchemy.org) | [![PyPi version](https://img.shields.io/pypi/v/sqlalchemy.svg)](https://pypi.python.org/pypi/sqlalchemy/) | SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL. |
-|[flask-swagger](https://github.com/deginner/flask-swagger) | [![PyPi version](https://img.shields.io/pypi/v/flask-swagger.svg)](https://pypi.python.org/pypi/flask-swagger/) |A Swagger 2.0 spec extractor for Flask. |
-|[alchemyjsonchema](https://github.com/deginner/alchemyjsonschema) | [![PyPi version](https://img.shields.io/pypi/v/alchemyjsonschema.svg)](https://pypi.python.org/pypi/alchemyjsonschema/) | Convert SQLAlchemy ORM objects to schemas. |
-|[Swagger-UI](http://swagger.io/swagger-ui/) | [![NPM version](https://badge.fury.io/js/swagger-ui.png)](http://badge.fury.io/js/swagger-ui) | Automatically generated, interactive documentation for Swagger specs. |
-
 
 ## Install
 
@@ -85,3 +62,26 @@ By exercizing all of the Deginner components in an integrated context, functiona
 Currently the tests expect the server to be running on 0.0.0.0:8002, like the default `make run` behavior. This test method is scheduled for an immediate upgrade.
 
 `python setup.py pytest`
+
+## Requirements Info
+
+### Deginner Application Stack
+
+| Project |                 Version    |  Description                    |
+|---------|------------|---------------|---------------------------------|
+|[bitjws](https://github.com/deginner/bitjws) | [![PyPi version](https://img.shields.io/pypi/v/bitjws.svg)](https://pypi.python.org/pypi/bitjws/) |JWS ([JSON Web Signature](http://self-issued.info/docs/draft-ietf-jose-json-web-signature.html)) using Bitcoin message signing as the algorithm.|
+|[flask-bitjws](https://github.com/deginner/flask-bitjws) | [![PyPi version](https://img.shields.io/pypi/v/flask-bitjws.svg)](https://pypi.python.org/pypi/flask-bitjws/) |[Flask](http://flask.pocoo.org) extension for [bitjws](https://github.com/g-p-g/bitjws) authentication. |
+|[bravado-bitjws](https://github.com/deginner/bravado-bitjws) | [![PyPi version](https://img.shields.io/pypi/v/bravado-bitjws.svg)](https://pypi.python.org/pypi/bravado-bitjws/) |Bravado-bitjws is an add on for [Bravado](https://github.com/Yelp/bravado) that allows [bitjws](https://github.com/g-p-g/bitjws) authentication.|
+|[sqlalchemy-login-models](https://github.com/deginner/sqlalchemy-login-models) | 0.0.4 | User related data models for a server using [SQLAlchemy](http://www.sqlalchemy.org/), and [json schemas](http://json-schema.org/). |
+
+
+### Imported Stack
+
+| Project |                 Version    |  Description                    |
+|---------|------------|---------------|---------------------------------|
+|[Flask](http://flask.pocoo.org/) | [![PyPi version](https://img.shields.io/pypi/v/flask.svg)](https://pypi.python.org/pypi/flask/) | Flask is a microframework for Python based on Werkzeug, Jinja 2 and good intentions. |
+|[Swagger](http://swagger.io/) | 2.0 | Swagxample includes a Swagger spec which is used to configure the [bravado-bitjws](https://github.com/deginner/bravado-bitjws) client automatically. |
+|[SQLAlchemy](https://sqlalchemy.org) | [![PyPi version](https://img.shields.io/pypi/v/sqlalchemy.svg)](https://pypi.python.org/pypi/sqlalchemy/) | SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL. |
+|[flask-swagger](https://github.com/deginner/flask-swagger) | [![PyPi version](https://img.shields.io/pypi/v/flask-swagger.svg)](https://pypi.python.org/pypi/flask-swagger/) |A Swagger 2.0 spec extractor for Flask. |
+|[alchemyjsonchema](https://github.com/deginner/alchemyjsonschema) | [![PyPi version](https://img.shields.io/pypi/v/alchemyjsonschema.svg)](https://pypi.python.org/pypi/alchemyjsonschema/) | Convert SQLAlchemy ORM objects to schemas. |
+|[Swagger-UI](http://swagger.io/swagger-ui/) | [![NPM version](https://badge.fury.io/js/swagger-ui.png)](http://badge.fury.io/js/swagger-ui) | Automatically generated, interactive documentation for Swagger specs. |
