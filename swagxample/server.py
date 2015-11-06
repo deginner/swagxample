@@ -36,7 +36,6 @@ def jsonify2(obj, name):
     spec['definitions'] = SWAGGER_SPEC['definitions']
     return jsonify(obj, spec)
 
-
 __all__ = ['app', ]
 
 
@@ -93,7 +92,7 @@ Coin = model.Coin
 @login_required
 def get_coins():
     """
-    Get a list of all coins.
+    Get a list of all coins owned by signing user.
     Currently no search parameters are supported.
     ---
     responses:
@@ -107,9 +106,6 @@ def get_coins():
         description: unexpected error
         schema:
           $ref: '#/definitions/errorModel'
-    produces:
-      - application/jose
-    description: get a list of all coins you own
     security:
       - kid: []
       - typ: []
@@ -128,10 +124,10 @@ def get_coins():
 @login_required
 def post_coin():
     """
-    Create a coin. The request sender will be installed as the coin's user.
+    Create a new coin.
+    The request sender will be installed as the coin's user.
     ---
     operationId: addCoin
-    description: Creates a new coin.
     responses:
       '200':
         description: coin response
@@ -148,8 +144,6 @@ def post_coin():
         required: true
         name: coin
         in: body
-    produces:
-      - application/jose
     security:
       - kid: []
       - typ: []
@@ -186,8 +180,6 @@ def get_user():
         description: unexpected error
         schema:
           $ref: '#/definitions/errorModel'
-    produces:
-      - application/jose
     description: get your user record
     security:
       - kid: []
@@ -207,8 +199,6 @@ def add_user():
     ---
     operationId:
       addUser
-    produces:
-      - application/jose
     parameters:
       - name: user
         in: body
@@ -258,6 +248,7 @@ def add_user():
         return 'username taken', 400
     jresult = jsonify2(userkey, 'UserKey')
     return current_app.bitjws.create_response(jresult)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8002, debug=True)

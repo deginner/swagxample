@@ -6,8 +6,8 @@ install:
 	python setup.py install
 
 clean:
-	rm -rf build dist swagxample.egg-info test/__pycache__
-	rm -rf test/*.pyc *.egg *~ *pyc test/*~
+	rm -rf .cache build dist *.egg-info test/__pycache__
+	rm -rf test/*.pyc *.egg *~ *pyc test/*~ .eggs
 
 swagger:
 	flaskswagger swagxample.server:app --template swagxample/static/swagger.json --out-dir swagxample/static/
