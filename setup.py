@@ -6,6 +6,13 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 
+extras = {
+    'build': [
+        'alchemyjsonschema',
+        'flask-swagger',
+    ]
+}
+
 setup(
     name='Swagxamle',
     version='0.0.2',
@@ -22,9 +29,8 @@ setup(
         "bitjws==0.6.3.1",
         "flask>=0.10.0",
         "flask-login",
-        "flask-bitjws>=0.1.1.2",
-        "sqlalchemy-login-models"
+        "flask-bitjws>=0.1.1.2"
     ],
-    extras_require=["alchemyjsonschema", "flask-swagger"],
+    extras_require=extras,
     tests_require=['pytest', 'pytest-cov']
 )
