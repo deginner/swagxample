@@ -10,6 +10,7 @@ import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from alchemyjsonschema.dictify import jsonify
 from flask import Flask, request, current_app, make_response
+from flask.ext.cors import CORS
 from flask.ext.login import login_required, current_user
 from flask_bitjws import FlaskBitjws, load_jws_from_request, FlaskUser
 from jsonschema import validate, ValidationError
@@ -81,10 +82,14 @@ app._static_folder = "%s/static" % os.path.realpath(os.path.dirname(__file__))
 FlaskBitjws(app, privkey=cfg.PRIV_KEY, get_last_nonce=get_last_nonce,
             get_user_by_key=get_user_by_key, basepath=cfg.BASEPATH)
 
+# Setup logging
 logfile = cfg.LOGFILE or 'server.log'
 loglevel = cfg.LOGLEVEL or logging.INFO
 logging.basicConfig(filename=logfile, level=loglevel)
 logger = logging.getLogger(__name__)
+ 
+# Setup CORS
+CORS(app)
 
 # Setup database
 eng = sa.create_engine(cfg.SA_ENGINE_URI)
@@ -262,4 +267,3 @@ def add_user():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8002, debug=True)
-

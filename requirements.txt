@@ -1,4 +1,4 @@
-## security
+## crypto
 bitjws==0.6.3.1
 
 # database
@@ -13,6 +13,7 @@ git+https://github.com/deginner/sqlalchemy-login-models
 flask
 flask-login
 flask-bitjws
+flask-cors
 
 # client (for testing... move if create setup.py)
 requests

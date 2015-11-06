@@ -8,7 +8,7 @@ classifiers = [
 
 setup(
     name='Swagxample',
-    version='0.0.3',
+    version='0.0.3.1',
     packages=['swagxample'],
     url='https://bitbucket.org/deginner/swagxample',
     license='MIT',
@@ -24,6 +24,7 @@ setup(
         "bitjws==0.6.3.1",
         "flask>=0.10.0",
         "flask-login",
+        "flask-cors",
         "flask-bitjws>=0.1.1.2",
         "alchemyjsonschema",
         "sqlalchemy-login-models"
