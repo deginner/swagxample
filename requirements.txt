@@ -2,7 +2,7 @@
 bitjws==0.6.3.1
 
 # database
-sqlalchemy
+sqlalchemy>=1.0.9
 alchemyjsonschema
 
 # pending Pypi release

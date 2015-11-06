@@ -18,13 +18,15 @@ setup(
     description='An HTTP server application using Swagger 2.0, bitjws, and SQLAlchemy.',
     setup_requires=['pytest-runner'],
     install_requires=[
+        'sqlalchemy>=1.0.9',
         'secp256k1==0.11',
         "bitjws==0.6.3.1",
         "flask>=0.10.0",
         "flask-login",
         "flask-bitjws>=0.1.1.2",
+        "alchemyjsonschema",
         "sqlalchemy-login-models"
     ],
-    extras_require=["alchemyjsonschema", "flask-swagger"],
+    extras_require=["flask-swagger"],
     tests_require=['pytest', 'pytest-cov']
 )
