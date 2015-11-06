@@ -19,8 +19,11 @@ git checkout d7eb1ae96dfe9d497a26b3e7ff8b6f58e61e400a
 ./autogen.sh
 ./configure --enable-module-recovery
 make
-sudo make install
 ```
+
+##### Install Swagxample
+
+Swagxample is pretty easy to install after secp256k1. Just `make install`. This will automatically create a `~/.swagxample` directory for logs and temporary files, and run `python setup.py install`.
 
 ## Usage
 
@@ -28,10 +31,9 @@ Start the server in debugging mode.
 
 `python swagxample/server.py`
 
-Start the server using gunicorn, as suitable for a production environment.
+Start `supervisord` to manage the gunicorn process. This is suitable for a production environment.
 
-`make run`
-
+`supervisord`
 
 ## Automated Swagger Updates
 
