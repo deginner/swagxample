@@ -60,7 +60,7 @@ def get_last_nonce(app, key, nonce):
     try:
         ses.commit()
     except Exception as e:
-        print e
+        current_app.logger.exception(e)
         ses.rollback()
         ses.flush()
     return lastnonce
@@ -83,8 +83,8 @@ FlaskBitjws(app, privkey=cfg.PRIV_KEY, get_last_nonce=get_last_nonce,
             get_user_by_key=get_user_by_key, basepath=cfg.BASEPATH)
 
 # Setup logging
-logfile = cfg.LOGFILE or 'server.log'
-loglevel = cfg.LOGLEVEL or logging.INFO
+logfile = cfg.LOGFILE if hasattr(cfg, 'LOGFILE') else 'server.log'
+loglevel = cfg.LOGLEVEL if hasattr(cfg, 'LOGLEVEL') else logging.INFO
 logging.basicConfig(filename=logfile, level=loglevel)
 logger = logging.getLogger(__name__)
  
@@ -170,8 +170,8 @@ def post_coin():
         ses.commit()
     except Exception as ie:
         return generic_code_error('Could not create coin')
+    current_app.logger.info("created coin %s" % coin)
     newcoin = jsonify2(coin, 'Coin')
-    current_app.logger.info("created coin %s" % coin.id)
     return current_app.bitjws.create_response(newcoin)
 
 

@@ -3,7 +3,8 @@ bitjws==0.6.3.1
 
 # database
 sqlalchemy>=1.0.9
-alchemyjsonschema
+#alchemyjsonschema
+git+https://github.com/isysd/alchemyjsonschema
 
 # pending Pypi release
 #sqlalchemy-login-models
