@@ -3,6 +3,7 @@ import bitjws
 import copy
 import imp
 import json
+import logging
 import os
 import sys
 import sqlalchemy as sa
@@ -27,7 +28,8 @@ except Exception as e:
     sys.exit()
 
 # get the swagger spec for this server
-SWAGGER_SPEC = json.loads(open('swagxample/static/swagger.json').read())
+iml = os.path.dirname(os.path.realpath(__file__))
+SWAGGER_SPEC = json.loads(open(iml + '/static/swagger.json').read())
 # invert definitions
 def jsonify2(obj, name):
     #TODO replace this with a cached definitions patch
@@ -75,8 +77,14 @@ def get_user_by_key(app, key):
 # Setup flask app and FlaskBitjws
 app = Flask(__name__)
 app._static_folder = "%s/static" % os.path.realpath(os.path.dirname(__file__))
+
 FlaskBitjws(app, privkey=cfg.PRIV_KEY, get_last_nonce=get_last_nonce,
-            get_user_by_key=get_user_by_key)
+            get_user_by_key=get_user_by_key, basepath=cfg.BASEPATH)
+
+logfile = cfg.LOGFILE or 'server.log'
+loglevel = cfg.LOGLEVEL or logging.INFO
+logging.basicConfig(filename=logfile, level=loglevel)
+logger = logging.getLogger(__name__)
 
 # Setup database
 eng = sa.create_engine(cfg.SA_ENGINE_URI)
@@ -158,6 +166,7 @@ def post_coin():
     except Exception as ie:
         return generic_code_error('Could not create coin')
     newcoin = jsonify2(coin, 'Coin')
+    current_app.logger.info("created coin %s" % coin.id)
     return current_app.bitjws.create_response(newcoin)
 
 
@@ -230,7 +239,7 @@ def add_user():
     try:
         ses.commit()
     except Exception as ie:
-        print ie
+        current_app.logger.exception(ie)
         ses.rollback()
         ses.flush()
         return 'username taken', 400
@@ -240,13 +249,14 @@ def add_user():
     try:
         ses.commit()
     except Exception as ie:
-        print ie
+        current_app.logger.exception(ie)
         ses.rollback()
         ses.flush()
         #ses.delete(user)
         #ses.commit()
         return 'username taken', 400
     jresult = jsonify2(userkey, 'UserKey')
+    current_app.logger.info("registered user %s with key %s" % (user.id, userkey.key))
     return current_app.bitjws.create_response(jresult)
 
 

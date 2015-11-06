@@ -7,8 +7,8 @@ classifiers = [
 ]
 
 setup(
-    name='Swagxamle',
-    version='0.0.2',
+    name='Swagxample',
+    version='0.0.3',
     packages=['swagxample'],
     url='https://bitbucket.org/deginner/swagxample',
     license='MIT',
@@ -17,6 +17,7 @@ setup(
     author_email='support@deginner.com',
     description='An HTTP server application using Swagger 2.0, bitjws, and SQLAlchemy.',
     setup_requires=['pytest-runner'],
+    include_package_data = True,
     install_requires=[
         'sqlalchemy>=1.0.9',
         'secp256k1==0.11',
@@ -27,6 +28,10 @@ setup(
         "alchemyjsonschema",
         "sqlalchemy-login-models"
     ],
-    extras_require=["flask-swagger"],
-    tests_require=['pytest', 'pytest-cov']
+    tests_require=['pytest', 'pytest-cov'],
+    extras_require={"build": ["flask-swagger"]},
+    entry_points = """
+    [console_scripts]
+    createuser = create_user:create_user
+    """
 )
