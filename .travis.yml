@@ -1,0 +1,36 @@
+language: python
+python:
+  - "2.7"
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - git
+      - libtool
+      - autoconf
+      - automake
+
+before_install:
+  - git clone git://github.com/bitcoin/secp256k1.git libsecp256k1
+  - pushd libsecp256k1
+  - git checkout d7eb1ae96dfe9d497a26b3e7ff8b6f58e61e400a
+  - ./autogen.sh
+  - ./configure --enable-module-recovery --enable-module-ecdh --enable-module-schnorr
+  - make
+  - popd
+  - pip install -U coveralls
+
+install:
+  - INCLUDE_DIR=$(readlink -f ./libsecp256k1/include) LIB_DIR=$(readlink -f ./libsecp256k1/.libs) python setup.py -q install
+
+script:
+  - LD_LIBRARY_PATH=$(readlink -f ./libsecp256k1/.libs) python setup.py pytest --addopts --cov=swagxample
+
+after_success:
+  - coveralls
+
+deploy:
+  api_key:
+    secure: qJ0DX79ms/uBx1C+c7qYt1OqPy8PlHlqLQ/7innyLuy149FKSnhFmpg55ASe6wDAhtFM0gJwfs/0HtJTBnZEovkNKaGk/iSXelFYh5SzBJH/C6Ce9VzgMm0yqqCjkBCgCbIU2Aw7xBLIdP+/m2BFzuH6cxA6crOD81r1w52fgbEjHQQwatPSGsFzTKGFRgYF8Dv4BfSulOcCEQmL8Qs6IUQJi9f2klIonDrIMLV8/pVP+4GXxz33CMLwdP6GWUL2k0XZVO/CXk1ztfAr5UIM62e3u8gjgohw7MdhigwjNH4gfDqwdkCSX3/Ty1PhZZq8i6JhGb5FZYdO88+1uW3IhPEPO88BcqPypf5+0G2+IPlRlHBXdVzwkrIHf5IuAV2ii+VWvGbbkgAgl7oujCrUKEEGrCxcLRErXfUpZ8qGDW4KuZBaatCDy9RBbOfR1wWoav9v3mtXi10ro+aWN4sBjCNQcrFYTs1hm2ewzL3NyoBvR40aZj1iQtNLJKZCn9Bdw0xEztHurupo65v6APqKPZnisLX5HrUHnVhrLf6uaquR1S6lNb1Oyx60GTqnfBUXsp8qZg+SIFffJjusDu4KcE3v/eL6ckwYZsmx8NZzenaA+1NGkeomXsENz9RWnF33fOIGiJzZaOxGf2j8uyDeETL/0LssZBIqIB4sNxTMokA=
