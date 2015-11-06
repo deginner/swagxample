@@ -1,6 +1,6 @@
 # Swagger + bitjws Example App
 
-The app is a Coin collection, where Users identified by bitjws keys can create and manage virtual Coins stored on the server. For detailed documentation of the API, see the [swagger docs](http://deginner.github.io/swaxample-ui/).
+The app is a Coin collection, where Users identified by bitjws keys can create and manage virtual Coins stored on the server. For detailed documentation of the API, see the [swagger docs](http://deginner.github.io/swagxample-ui/).
 
 [Deginner](https://github.com/deginner/) created this app to demo its rapid API development stack. It will be featured in a tutorial and a meetup of that nature. Follow and fork it to participate.
 
