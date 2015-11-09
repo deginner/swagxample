@@ -17,7 +17,7 @@ git clone git://github.com/bitcoin/secp256k1.git libsecp256k1
 cd libsecp256k1
 git checkout d7eb1ae96dfe9d497a26b3e7ff8b6f58e61e400a
 ./autogen.sh
-./configure --enable-module-recovery
+./configure --enable-module-recovery --enable-module-ecdh --enable-module-schnorr
 make
 ```
 

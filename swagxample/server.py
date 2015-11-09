@@ -169,7 +169,9 @@ def post_coin():
     try:
         ses.commit()
     except Exception as ie:
-        return generic_code_error('Could not create coin')
+        ses.rollback()
+        ses.flush()
+        return 'Could not create coin', 500
     current_app.logger.info("created coin %s" % coin)
     newcoin = jsonify2(coin, 'Coin')
     return current_app.bitjws.create_response(newcoin)
