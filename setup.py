@@ -25,9 +25,8 @@ setup(
         "flask>=0.10.0",
         "flask-login",
         "flask-cors",
-        "flask-bitjws>=0.1.1.2",
-        "alchemyjsonschema",
-        "sqlalchemy-login-models"
+        "flask-bitjws>=0.1.1.4",
+        "alchemyjsonschema"
     ],
     tests_require=['pytest', 'pytest-cov'],
     extras_require={"build": ["flask-swagger"]},
