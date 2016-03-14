@@ -87,7 +87,7 @@ logfile = cfg.LOGFILE if hasattr(cfg, 'LOGFILE') else 'server.log'
 loglevel = cfg.LOGLEVEL if hasattr(cfg, 'LOGLEVEL') else logging.INFO
 logging.basicConfig(filename=logfile, level=loglevel)
 logger = logging.getLogger(__name__)
- 
+
 # Setup CORS
 CORS(app)
 
@@ -125,7 +125,7 @@ def get_coins():
       - alg: []
     operationId: findCoin
     """
-    coinsq = ses.query(Coin).all()
+    coinsq = ses.query(Coin).filter(Coin.user_id == current_user.id)
     if not coinsq:
         return None
     coins = [jsonify2(c, 'Coin') for c in coinsq]
