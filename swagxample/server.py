@@ -15,6 +15,8 @@ from flask.ext.login import login_required, current_user
 from flask_bitjws import FlaskBitjws, load_jws_from_request, FlaskUser
 from jsonschema import validate, ValidationError
 from sqlalchemy_login_models.model import UserKey, User as SLM_User
+import pika
+import pikaconfig
 import model
 
 try:
@@ -100,6 +102,23 @@ for m in model.__all__:
     getattr(model, m).metadata.create_all(eng)
 Coin = model.Coin
 
+# Setup pika channel for publishing new users and coins to AMQP
+pikaClient = pika.BlockingConnection(pika.URLParameters(pikaconfig.BROKER_URL))
+pikaChannel = pikaClient.channel()
+pikaChannel.exchange_declare(**pikaconfig.EXCHANGE)
+
+
+def broadcast_amqp(new_object):
+    """
+    Helper function to publish new Users and Coins to AMQP.
+
+    :param new_object: a dict containing the new record's info
+    """
+    message = current_app.bitjws.create_response(new_object).data
+    pikaChannel.basic_publish(body=message,
+                              exchange=pikaconfig.EXCHANGE['exchange'],
+                              routing_key='')
+
 
 @app.route('/coin', methods=['GET'])
 @login_required
@@ -174,6 +193,7 @@ def post_coin():
         return 'Could not create coin', 500
     current_app.logger.info("created coin %s" % coin)
     newcoin = jsonify2(coin, 'Coin')
+    broadcast_amqp(newcoin)
     return current_app.bitjws.create_response(newcoin)
 
 
@@ -263,6 +283,7 @@ def add_user():
         #ses.commit()
         return 'username taken', 400
     jresult = jsonify2(userkey, 'UserKey')
+    broadcast_amqp(jresult)
     current_app.logger.info("registered user %s with key %s" % (user.id, userkey.key))
     return current_app.bitjws.create_response(jresult)
 

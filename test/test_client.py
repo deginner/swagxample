@@ -1,6 +1,9 @@
+from multiprocessing.pool import ThreadPool
 import pytest
 import bitjws
 from bravado_bitjws.client import BitJWSSwaggerClient
+import pika
+import pikaconfig
 
 privkey = bitjws.PrivateKey()
 
@@ -16,6 +19,26 @@ client = BitJWSSwaggerClient.from_url(specurl, privkey=privkey)
 
 luser = client.get_model('User')(username=username)
 user = client.user.addUser(user=luser).result()
+
+amqp_msg = ''  # globally defined to be used by async func for simplicity.
+
+
+def get_pika_messages():
+    broker_url = pikaconfig.BROKER_URL
+    connection = pika.BlockingConnection(pika.URLParameters(broker_url))
+    channel = connection.channel()
+    channel.exchange_declare(**pikaconfig.EXCHANGE)
+    result = channel.queue_declare(exclusive=True)
+    queue_name = result.method.queue
+    channel.queue_bind(exchange='sockjsmq', queue=queue_name)
+
+    def callback(ch, method, properties, body):
+        global amqp_msg
+        amqp_msg = body
+        connection.close()
+
+    channel.basic_consume(callback, queue=queue_name, no_ack=True)
+    channel.start_consuming()
 
 
 def test_register_user():
@@ -83,3 +106,50 @@ def test_user_can_only_get_own_coins():
 
     assert not get_others_coins(user, coins)
     assert not get_others_coins(user2, coins2)
+
+
+def test_new_user_is_amqp_broadcasted():
+    """Tests that a newly created user gets broadcasted to AMQP via pika."""
+    print "creating a new user"
+    privkey2 = bitjws.PrivateKey()
+    address2 = bitjws.pubkey_to_addr(privkey2.pubkey.serialize())
+    username2 = str(address2)[0:8]
+
+    client2 = BitJWSSwaggerClient.from_url(specurl, privkey=privkey2)
+
+    luser2 = client2.get_model('User')(username=username2)
+
+    print "attempting to read user broadcasted to AMQP..."
+    pool = ThreadPool(processes=1)
+    pool.apply_async(get_pika_messages, ())
+
+    user2 = client2.user.addUser(user=luser2).result()
+
+    global amqp_msg
+
+    msg = bitjws.validate_deserialize(amqp_msg, requrl='/response')[1]
+
+    assert msg['data']['user']['id'] == user2.id
+    assert msg['data']['user']['username'] == user2.user.username
+    assert msg['data']['key'] == user2.key
+
+
+def test_new_coin_is_amqp_broadcasted():
+    """Tests that a newly created coin gets broadcasted to AMQP via pika."""
+    print "creating a new coin"
+    lcoin = client.get_model('Coin')(metal='ub', mint='uranus')
+
+    print "attempt to read coin broadcasted to AMQP..."
+    pool = ThreadPool(processes=1)
+    pool.apply_async(get_pika_messages, ())
+
+    coin = client.coin.addCoin(coin=lcoin).result()
+
+    global amqp_msg
+
+    msg = bitjws.validate_deserialize(amqp_msg, requrl='/response')[1]
+
+    assert msg['data']['id'] == coin.id
+    assert msg['data']['metal'] == coin.metal
+    assert msg['data']['mint'] == coin.mint
+    assert msg['data']['user']['id'] == user.id
